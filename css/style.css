@@ -1,0 +1,674 @@
+/* Captiours CSS - Material Design 3-inspired styles */
+
+:root {
+    /* App Default Light Mode Variables */
+    --app-bg: #F3EDF7;
+    --app-surface: #FEF7FF;
+    --app-on-surface: #1D1B20;
+    --app-on-surface-variant: #49454F;
+    --app-primary: #6750A4;
+    --app-on-primary: #FFFFFF;
+    --app-primary-container: #EADDFF;
+    --app-on-primary-container: #21005D;
+    --app-outline: #79747E;
+    --app-outline-variant: #CAC4D0;
+    --app-error: #B3261E;
+    --app-error-container: #F9DEDC;
+    --app-on-error-container: #410E0B;
+    --app-card-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+    --app-modal-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+    --app-transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+    /* Canvas Variables (Configured by User) */
+    --canvas-bg: #FFFFFF;
+    --canvas-text: #1D1B20;
+    --canvas-primary: #6750A4;
+    --cover-height: 45%;
+    --font-scale: 1;
+    --creator-name: "@captiours";
+}
+
+/* Dark Mode Overrides for App UI */
+html[data-theme="dark"] {
+    --app-bg: #141218;
+    --app-surface: #1D1B20;
+    --app-on-surface: #E6E1E5;
+    --app-on-surface-variant: #CAC4D0;
+    --app-primary: #D0BCFF;
+    --app-on-primary: #381E72;
+    --app-primary-container: #4F378B;
+    --app-on-primary-container: #EADDFF;
+    --app-outline: #938F99;
+    --app-outline-variant: #49454F;
+    --app-error: #F2B8B5;
+    --app-error-container: #8C1D18;
+    --app-on-error-container: #F9DEDC;
+    --app-card-shadow: 0 4px 6px rgba(0, 0, 0, 0.3), 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+body {
+    background-color: var(--app-bg);
+    color: var(--app-on-surface);
+    padding-top: 80px;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    transition: background-color var(--app-transition), color var(--app-transition);
+}
+
+/* Accessibility: Focus visible outline improvement */
+*:focus-visible {
+    outline: 3px solid var(--app-primary);
+    outline-offset: 2px;
+}
+
+/* Navbar */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 64px;
+    background-color: var(--app-surface);
+    border-bottom: 1px solid var(--app-outline-variant);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 24px;
+    z-index: 100;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    transition: background-color var(--app-transition), border-color var(--app-transition);
+}
+
+.navbar-brand {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--app-primary);
+    letter-spacing: -0.02em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+}
+
+.navbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Icon Button */
+.icon-button {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--app-on-surface);
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.icon-button:hover {
+    background-color: rgba(103, 80, 164, 0.12);
+}
+
+.icon-button:active {
+    background-color: rgba(103, 80, 164, 0.2);
+}
+
+/* Layout - Dual Column Grid on Desktop */
+.main-layout {
+    width: 100%;
+    max-width: 1200px;
+    padding: 24px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 32px;
+}
+
+@media (min-width: 1024px) {
+    .main-layout {
+        grid-template-columns: 1.1fr 0.9fr;
+        align-items: start;
+    }
+}
+
+/* Editor Container */
+.editor-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Real-time Preview Sidebar (Desktop Sticky) */
+.preview-sidebar {
+    display: none; /* Hidden on mobile, shown in sidebar on desktop */
+}
+
+@media (min-width: 1024px) {
+    .preview-sidebar {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        position: sticky;
+        top: 88px;
+        max-height: calc(100vh - 120px);
+        overflow-y: auto;
+        padding-right: 8px;
+    }
+
+    .preview-sidebar::-webkit-scrollbar {
+        width: 6px;
+    }
+    .preview-sidebar::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    .preview-sidebar::-webkit-scrollbar-thumb {
+        background: var(--app-outline-variant);
+        border-radius: 10px;
+    }
+}
+
+.sidebar-header {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--app-primary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+/* Cards */
+.card {
+    background-color: var(--app-surface);
+    padding: 24px;
+    border-radius: 16px;
+    box-shadow: var(--app-card-shadow);
+    transition: background-color var(--app-transition), box-shadow var(--app-transition);
+    border: 1px solid var(--app-outline-variant);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    font-weight: 600;
+    font-size: 16px;
+    color: var(--app-primary);
+}
+
+.input-group {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.input-group:last-child {
+    margin-bottom: 0;
+}
+
+label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--app-on-surface-variant);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Inputs and Selects */
+input[type="text"], textarea, select {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid var(--app-outline);
+    border-radius: 8px;
+    background-color: transparent;
+    font-size: 14px;
+    outline: none;
+    color: var(--app-on-surface);
+    transition: border-color 0.2s, background-color 0.2s, box-shadow 0.2s;
+}
+
+input:focus, textarea:focus, select:focus {
+    border-color: var(--app-primary);
+    border-width: 2px;
+    padding: 11px 15px;
+    box-shadow: 0 0 0 3px rgba(103, 80, 164, 0.15);
+}
+
+input[type="file"] {
+    font-size: 13px;
+    padding: 12px;
+    border: 1px dashed var(--app-outline);
+    border-radius: 8px;
+    width: 100%;
+    cursor: pointer;
+    background-color: rgba(103, 80, 164, 0.02);
+    transition: background-color 0.2s;
+}
+
+input[type="file"]:hover {
+    background-color: rgba(103, 80, 164, 0.05);
+}
+
+textarea {
+    height: 100px;
+    resize: vertical;
+    line-height: 1.5;
+}
+
+/* Helper Text */
+.helper-text {
+    font-size: 11px;
+    color: var(--app-on-surface-variant);
+    margin-top: 2px;
+}
+
+/* Buttons */
+.btn-text-danger {
+    background: transparent;
+    color: var(--app-error);
+    border: none;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 12px;
+    border-radius: 8px;
+    transition: background-color 0.2s;
+}
+
+.btn-text-danger:hover {
+    background-color: var(--app-error-container);
+}
+
+.btn-primary {
+    width: 100%;
+    padding: 14px 24px;
+    background-color: var(--app-primary);
+    color: var(--app-on-primary);
+    border: none;
+    border-radius: 100px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+    transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
+}
+
+.btn-primary:hover {
+    background-color: #554287;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.btn-primary:active {
+    transform: scale(0.98);
+}
+
+.btn-secondary {
+    width: 100%;
+    padding: 14px 24px;
+    background-color: var(--app-primary-container);
+    color: var(--app-on-primary-container);
+    border: none;
+    border-radius: 100px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    transition: background-color 0.2s, transform 0.1s;
+    border: 1px solid transparent;
+}
+
+.btn-secondary:hover {
+    background-color: #dfd5f0;
+}
+
+.btn-secondary:active {
+    transform: scale(0.98);
+}
+
+/* Modals */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 200;
+    padding: 20px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--app-transition);
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.modal-content {
+    background-color: var(--app-surface);
+    width: 100%;
+    max-width: 500px;
+    max-height: 85vh;
+    border-radius: 28px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: var(--app-modal-shadow);
+    transform: translateY(20px);
+    transition: transform var(--app-transition), background-color var(--app-transition);
+}
+
+.modal-overlay.active .modal-content {
+    transform: translateY(0);
+}
+
+.modal-header {
+    padding: 20px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--app-outline-variant);
+}
+
+.modal-header h3 {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--app-on-surface);
+}
+
+.modal-body {
+    padding: 24px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* Toggle Switch Style (Material Design 3 style) */
+.toggle-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+}
+
+.toggle-label {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.toggle-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--app-on-surface);
+}
+
+.toggle-description {
+    font-size: 12px;
+    color: var(--app-on-surface-variant);
+    text-transform: none;
+    letter-spacing: normal;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 52px;
+    height: 32px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--app-outline);
+    transition: .4s;
+    border-radius: 32px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 24px;
+    width: 24px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+}
+
+input:checked + .slider {
+    background-color: var(--app-primary);
+}
+
+input:focus-visible + .slider {
+    box-shadow: 0 0 0 3px rgba(103, 80, 164, 0.4);
+}
+
+input:checked + .slider:before {
+    transform: translateX(20px);
+}
+
+/* Live Preview UI elements */
+.preview-grid {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+}
+
+/* Canvas Carousel Item */
+.canvas {
+    width: 360px;
+    height: 360px;
+    background-color: var(--canvas-bg);
+    color: var(--canvas-text);
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    display: flex;
+    flex-direction: column;
+    border-radius: 12px;
+    flex-shrink: 0;
+    border: 1px solid var(--app-outline-variant);
+    transition: background-color var(--app-transition), color var(--app-transition);
+}
+
+.cover {
+    height: var(--cover-height);
+    background-color: var(--app-bg);
+    transition: height 0.25s ease;
+    overflow: hidden;
+    position: relative;
+}
+
+.cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.content {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    justify-content: space-between;
+}
+
+.text-content {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    overflow: hidden;
+}
+
+.content h1 {
+    font-size: calc(20px * var(--font-scale));
+    font-weight: 700;
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+}
+
+.content p {
+    white-space: pre-wrap;
+    line-height: 1.45;
+    font-size: calc(13px * var(--font-scale));
+    opacity: 0.85;
+}
+
+.footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    font-weight: 500;
+    padding-top: 12px;
+    border-top: 1px solid rgba(121, 116, 126, 0.2);
+}
+
+.username {
+    color: var(--canvas-primary);
+    font-weight: 600;
+}
+
+.pagination {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.page-dot {
+    height: 6px;
+    width: 6px;
+    border-radius: 50%;
+    background-color: rgba(121, 116, 126, 0.3);
+    transition: all 0.2s ease;
+}
+
+.page-dot.active {
+    width: 18px;
+    border-radius: 8px;
+    background-color: var(--canvas-primary);
+}
+
+/* Floating Action Buttons (FAB) */
+.fab-container {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    display: flex;
+    gap: 12px;
+    z-index: 90;
+}
+
+.fab {
+    background-color: var(--app-primary);
+    color: var(--app-on-primary);
+    border: none;
+    border-radius: 16px;
+    height: 56px;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+    cursor: pointer;
+    transition: transform 0.2s, background-color 0.2s, box-shadow 0.2s;
+}
+
+.fab:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+}
+
+.fab:active {
+    transform: scale(0.95);
+}
+
+.fab-icon-only {
+    width: 56px;
+    padding: 0;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+/* Hide Preview FAB on large screens because preview is already shown live in the sidebar */
+@media (min-width: 1024px) {
+    .fab-icon-only#openPreviewModal {
+        display: none;
+    }
+}
+
+/* Spin animation for download button */
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.spinning {
+    animation: spin 1s linear infinite;
+}
+
+/* Empty State Styling */
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 48px 24px;
+    text-align: center;
+    background-color: var(--app-surface);
+    border-radius: 16px;
+    border: 2px dashed var(--app-outline-variant);
+    color: var(--app-on-surface-variant);
+    gap: 12px;
+}
+
+.empty-state .material-icons {
+    font-size: 48px;
+    color: var(--app-outline);
+}

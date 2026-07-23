@@ -1,748 +1,173 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Captiours - Editor Posts</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Captiours - Bulk Carousel Post Editor</title>
 
-<!-- Import Font Inter -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Preconnect for external Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-<!-- Import Material Icons -->
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Import Google Font Inter and Google Material Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-<!-- Import html2canvas -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- External Modular Style Sheet -->
+    <link rel="stylesheet" href="css/style.css">
 
-<style>
-    :root {
-        --md-sys-color-primary: #6750A4;
-        --md-sys-color-on-primary: #FFFFFF;
-        --md-sys-color-primary-container: #EADDFF;
-        --md-sys-color-surface: #FEF7FF;
-        --md-sys-color-on-surface: #1D1B20;
-        --md-sys-color-surface-container: #F3EDF7;
-        --md-sys-color-outline: #79747E;
-        
-        --canvas-bg: #FFFFFF;
-        --canvas-text: #1D1B20;
-        --canvas-primary: #6750A4;
-        --cover-height: 45%;
-        --font-scale: 1;
-        --creator-name: "@captiours";
-    }
+    <!-- HTML2Canvas Rendering Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
 
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        font-family: 'Inter', sans-serif;
-    }
-
-    body {
-        background: var(--md-sys-color-surface-container);
-        color: var(--md-sys-color-on-surface);
-        padding-top: 84px;
-        min-height: 100vh;
-        display: flex;
-        justify-content: center;
-    }
-
-    /* Navbar */
-    .navbar {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 64px;
-        background: var(--md-sys-color-surface);
-        border-bottom: 1px solid rgba(121, 116, 126, 0.2);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0 24px;
-        z-index: 100;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    }
-
-    .navbar-brand {
-        font-size: 20px;
-        font-weight: 700;
-        color: var(--md-sys-color-primary);
-        letter-spacing: -0.01em;
-    }
-
-    .icon-button {
-        background: transparent;
-        border: none;
-        cursor: pointer;
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--md-sys-color-on-surface);
-        transition: background 0.2s;
-    }
-
-    .icon-button:hover {
-        background: rgba(103, 80, 164, 0.08);
-    }
-
-    /* Layout Utama */
-    .main-container {
-        width: 100%;
-        max-width: 600px;
-        padding: 24px;
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-    }
-
-    .card {
-        background: var(--md-sys-color-surface);
-        padding: 24px;
-        border-radius: 16px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    }
-
-    .card-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 16px;
-        font-weight: 600;
-        font-size: 16px;
-        color: var(--md-sys-color-primary);
-    }
-
-    .input-group {
-        margin-bottom: 16px;
-    }
-
-    .input-group:last-child {
-        margin-bottom: 0;
-    }
-
-    label {
-        display: block;
-        margin-bottom: 6px;
-        font-size: 12px;
-        font-weight: 500;
-        color: var(--md-sys-color-outline);
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-    }
-
-    input[type="text"], textarea, select {
-        width: 100%;
-        padding: 12px 14px;
-        border: 1px solid var(--md-sys-color-outline);
-        border-radius: 8px;
-        background: transparent;
-        font-size: 14px;
-        outline: none;
-        color: var(--md-sys-color-on-surface);
-        transition: border-color 0.2s;
-    }
-
-    input:focus, textarea:focus, select:focus {
-        border-color: var(--md-sys-color-primary);
-        border-width: 2px;
-        padding: 11px 13px;
-    }
-
-    input[type="file"] {
-        font-size: 13px;
-        padding: 8px;
-        border: 1px dashed var(--md-sys-color-outline);
-        border-radius: 8px;
-        width: 100%;
-    }
-
-    textarea {
-        height: 100px;
-        resize: vertical;
-        line-height: 1.5;
-    }
-
-    .btn-text-danger {
-        background: transparent;
-        color: #B3261E;
-        border: none;
-        font-size: 13px;
-        font-weight: 600;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        gap: 4px;
-    }
-
-    .btn-primary {
-        width: 100%;
-        padding: 14px;
-        background: var(--md-sys-color-primary);
-        color: var(--md-sys-color-on-primary);
-        border: none;
-        border-radius: 100px;
-        font-size: 14px;
-        font-weight: 600;
-        cursor: pointer;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 8px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-        transition: background 0.2s;
-    }
-
-    .btn-primary:hover {
-        background: #554287;
-    }
-
-    .btn-secondary {
-        width: 100%;
-        padding: 14px;
-        background: var(--md-sys-color-primary-container);
-        color: var(--md-sys-color-primary);
-        border: none;
-        border-radius: 100px;
-        font-size: 14px;
-        font-weight: 600;
-        cursor: pointer;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 8px;
-    }
-
-    /* Modal Sistem */
-    .modal-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0,0,0,0.5);
-        display: none;
-        justify-content: center;
-        align-items: center;
-        z-index: 200;
-        padding: 20px;
-    }
-
-    .modal-overlay.active {
-        display: flex;
-    }
-
-    .modal-content {
-        background: var(--md-sys-color-surface);
-        width: 100%;
-        max-width: 500px;
-        max-height: 85vh;
-        border-radius: 24px;
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-    }
-
-    .modal-header {
-        padding: 20px 24px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border-bottom: 1px solid rgba(121, 116, 126, 0.2);
-    }
-
-    .modal-header h3 {
-        font-size: 18px;
-        font-weight: 600;
-    }
-
-    .modal-body {
-        padding: 24px;
-        overflow-y: auto;
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-    }
-
-    /* Preview Container di dalam Modal */
-    .preview-grid {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 24px;
-    }
-
-    /* Canvas Karusel (1:1) */
-    .canvas {
-        width: 360px;
-        height: 360px;
-        background: var(--canvas-bg);
-        color: var(--canvas-text);
-        overflow: hidden;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        display: flex;
-        flex-direction: column;
-        border-radius: 4px;
-        flex-shrink: 0;
-    }
-
-    .cover {
-        height: var(--cover-height);
-        background: var(--md-sys-color-surface-container);
-        transition: height 0.2s ease;
-    }
-
-    .cover img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-
-    .content {
-        padding: 20px;
-        display: flex;
-        flex-direction: column;
-        flex: 1;
-        justify-content: space-between;
-    }
-
-    .text-content {
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-    }
-
-    .content h1 {
-        font-size: calc(20px * var(--font-scale));
-        font-weight: 700;
-        line-height: 1.25;
-        letter-spacing: -0.02em;
-    }
-
-    .content p {
-        white-space: pre-wrap;
-        line-height: 1.45;
-        font-size: calc(13px * var(--font-scale));
-        opacity: 0.85;
-    }
-
-    .footer {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-size: 12px;
-        font-weight: 500;
-        padding-top: 12px;
-        border-top: 1px solid rgba(121, 116, 126, 0.2);
-    }
-
-    .username {
-        color: var(--canvas-primary);
-        font-weight: 600;
-    }
-
-    .pagination {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-    }
-
-    .page-dot {
-        height: 5px;
-        width: 5px;
-        border-radius: 50%;
-        background: rgba(121, 116, 126, 0.3);
-    }
-
-    .page-dot.active {
-        width: 16px;
-        border-radius: 8px;
-        background: var(--canvas-primary);
-    }
-
-    /* Floating Action Buttons (FAB) */
-    .fab-container {
-        position: fixed;
-        bottom: 24px;
-        right: 24px;
-        display: flex;
-        gap: 12px;
-        z-index: 90;
-    }
-
-    .fab {
-        background: var(--md-sys-color-primary);
-        color: var(--md-sys-color-on-primary);
-        border: none;
-        border-radius: 16px;
-        height: 56px;
-        padding: 0 20px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 14px;
-        font-weight: 600;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-        cursor: pointer;
-        transition: transform 0.2s, background 0.2s;
-    }
-
-    .fab:hover {
-        transform: scale(1.03);
-    }
-
-    .fab-icon-only {
-        width: 56px;
-        padding: 0;
-        justify-content: center;
-        border-radius: 50%;
-    }
-</style>
+    <!-- Modular Application JavaScript Logic -->
+    <script src="js/app.js" defer></script>
 </head>
 <body>
 
-<!-- Navbar -->
-<header class="navbar">
-    <div class="navbar-brand">Captiours</div>
-    <button class="icon-button" id="openSettingsModal" title="Pengaturan">
-        <span class="material-icons">settings</span>
-    </button>
-</header>
-
-<!-- Main Editor Container -->
-<main class="main-container">
-    <div id="formsContainer">
-        <!-- Form halaman akan dimuat secara dinamis -->
-    </div>
-
-    <button class="btn-secondary" id="addPageBtn">
-        <span class="material-icons" style="font-size: 18px;">add</span>
-        Tambah Halaman
-    </button>
-</main>
-
-<!-- Modal Pengaturan -->
-<div class="modal-overlay" id="settingsModal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3>Pengaturan Global</h3>
-            <button class="icon-button" id="closeSettingsModal">
-                <span class="material-icons">close</span>
+    <!-- Header & Navigation Bar -->
+    <header class="navbar">
+        <a href="#" class="navbar-brand" aria-label="Captiours Beranda">
+            <span class="material-icons" aria-hidden="true">layers</span>
+            Captiours
+        </a>
+        <div class="navbar-actions">
+            <button class="icon-button" id="openSettingsModal" title="Pengaturan Global" aria-label="Buka Pengaturan Global" aria-haspopup="dialog" aria-expanded="false">
+                <span class="material-icons">settings</span>
             </button>
         </div>
-        <div class="modal-body">
-            <div class="input-group">
-                <label>Nama Akun Kreator</label>
-                <input type="text" id="creatorNameInput" value="@captiours">
+    </header>
+
+    <!-- Main Content Dual-Column Layout -->
+    <main class="main-layout">
+
+        <!-- Left Side: Interactive Editor -->
+        <section class="editor-container" aria-label="Form Editor Halaman Karusel">
+
+            <!-- Dynamic Form Fields Mount -->
+            <div id="formsContainer">
+                <!-- Page editor cards will load dynamically via JS -->
             </div>
 
-            <div class="input-group">
-                <label>Tema Tampilan</label>
-                <select id="themeSelect">
-                    <option value="light">Terang (Clean)</option>
-                    <option value="dark">Gelap (Dark)</option>
-                    <option value="ocean">Biru Samudra</option>
-                    <option value="forest">Hijau Hutan</option>
-                    <option value="sunset">Jingga Senja</option>
-                    <option value="coffee">Kopi Latte</option>
-                    <option value="cyberpunk">Cyberpunk Neon</option>
-                </select>
+            <!-- Empty State illustration shown when there are no pages -->
+            <div id="emptyState" class="empty-state" style="display: none;">
+                <span class="material-icons" aria-hidden="true">dashboard_customize</span>
+                <p>Belum ada halaman karusel. Silakan tambah halaman baru.</p>
             </div>
 
-            <div class="input-group">
-                <label>Tinggi Sampul Gambar (<span id="heightValue">45</span>%)</label>
-                <input type="range" id="coverHeight" min="20" max="80" value="45" style="width: 100%; accent-color: var(--md-sys-color-primary);">
-            </div>
-
-            <div class="input-group">
-                <label>Faktor Skala Ukuran Font (<span id="fontScaleValue">1.0</span>x)</label>
-                <input type="range" id="fontScale" min="0.8" max="1.4" step="0.05" value="1.0" style="width: 100%; accent-color: var(--md-sys-color-primary);">
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Modal Pratinjau Karusel -->
-<div class="modal-overlay" id="previewModal">
-    <div class="modal-content" style="max-width: 440px;">
-        <div class="modal-header">
-            <h3>Pratinjau Karusel</h3>
-            <button class="icon-button" id="closePreviewModal">
-                <span class="material-icons">close</span>
+            <!-- Action button to Add Page -->
+            <button class="btn-secondary" id="addPageBtn" aria-label="Tambah Halaman Baru">
+                <span class="material-icons" aria-hidden="true">add</span>
+                Tambah Halaman
             </button>
-        </div>
-        <div class="modal-body">
-            <div class="preview-grid" id="previewContainer">
-                <!-- Kanvas pratinjau dirender otomatis di sini -->
+        </section>
+
+        <!-- Right Side: Real-Time Preview (Desktop Sticky Sidebar) -->
+        <aside class="preview-sidebar" aria-label="Pratinjau Karusel Real-time">
+            <div class="sidebar-header">
+                <span class="material-icons" aria-hidden="true">visibility</span>
+                <h2>Pratinjau Karusel</h2>
+            </div>
+            <div class="preview-grid" id="sidebarPreviewContainer">
+                <!-- Real-time canvas elements will be automatically loaded here on Desktop -->
+            </div>
+        </aside>
+
+    </main>
+
+    <!-- Settings Modal -->
+    <div class="modal-overlay" id="settingsModal" role="dialog" aria-modal="true" aria-labelledby="settingsModalTitle">
+        <div class="modal-content">
+            <header class="modal-header">
+                <h3 id="settingsModalTitle">Pengaturan Global</h3>
+                <button class="icon-button" id="closeSettingsModal" aria-label="Tutup Pengaturan Global">
+                    <span class="material-icons" aria-hidden="true">close</span>
+                </button>
+            </header>
+            <div class="modal-body">
+
+                <!-- Dark Mode / Theme Mode Toggle (Accessibility Friendly) -->
+                <div class="toggle-container">
+                    <div class="toggle-label">
+                        <span class="toggle-title">Mode Gelap (App)</span>
+                        <span class="toggle-description" id="theme-toggle-desc">Ubah tema tampilan editor Captiours</span>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="appThemeToggle" aria-describedby="theme-toggle-desc">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <!-- Creator Handle Username Input -->
+                <div class="input-group">
+                    <label for="creatorNameInput">Nama Akun Kreator</label>
+                    <input type="text" id="creatorNameInput" value="@captiours" placeholder="Contoh: @nama_kreator">
+                </div>
+
+                <!-- Live Preview Colors Themes Select -->
+                <div class="input-group">
+                    <label for="themeSelect">Tema Warna Karusel</label>
+                    <select id="themeSelect">
+                        <option value="light">Terang (Clean)</option>
+                        <option value="dark">Gelap (Dark)</option>
+                        <option value="ocean">Biru Samudra</option>
+                        <option value="forest">Hijau Hutan</option>
+                        <option value="sunset">Jingga Senja</option>
+                        <option value="coffee">Kopi Latte</option>
+                        <option value="cyberpunk">Cyberpunk Neon</option>
+                    </select>
+                </div>
+
+                <!-- Cover Image Ratio Dynamic Height Range Slider -->
+                <div class="input-group">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                        <label for="coverHeight">Tinggi Sampul Gambar</label>
+                        <span id="heightValue" style="font-weight: 600; font-size: 13px;">45</span><span style="font-size: 13px;">%</span>
+                    </div>
+                    <input type="range" id="coverHeight" min="20" max="80" value="45" aria-valuemin="20" aria-valuemax="80" aria-valuenow="45">
+                </div>
+
+                <!-- Font Scale Level Range Slider -->
+                <div class="input-group">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                        <label for="fontScale">Skala Ukuran Font</label>
+                        <span id="fontScaleValue" style="font-weight: 600; font-size: 13px;">1.00</span><span style="font-size: 13px;">x</span>
+                    </div>
+                    <input type="range" id="fontScale" min="0.8" max="1.4" step="0.05" value="1.0" aria-valuemin="0.8" aria-valuemax="1.4" aria-valuenow="1.0">
+                </div>
+
             </div>
         </div>
     </div>
-</div>
 
-<!-- Floating Action Buttons -->
-<div class="fab-container">
-    <button class="fab" id="downloadAllBtn" title="Unduh Semua Berkas">
-        <span class="material-icons">download</span>
-        Unduh
-    </button>
-    <button class="fab fab-icon-only" id="openPreviewModal" title="Pratinjau Karusel">
-        <span class="material-icons">visibility</span>
-    </button>
-</div>
-
-<script>
-    const formsContainer = document.getElementById("formsContainer");
-    const previewContainer = document.getElementById("previewContainer");
-    const addPageBtn = document.getElementById("addPageBtn");
-    const downloadAllBtn = document.getElementById("downloadAllBtn");
-    
-    // Modal Kontrol
-    const settingsModal = document.getElementById("settingsModal");
-    const previewModal = document.getElementById("previewModal");
-    
-    document.getElementById("openSettingsModal").onclick = () => settingsModal.classList.add("active");
-    document.getElementById("closeSettingsModal").onclick = () => settingsModal.classList.remove("active");
-    
-    document.querySelector(".fab-container #openPreviewModal").onclick = () => {
-        syncPreviews();
-        previewModal.classList.add("active");
-    };
-    document.getElementById("closePreviewModal").onclick = () => previewModal.classList.remove("active");
-
-    // Pengaturan Global & Tema
-    const themes = {
-        light: { bg: '#FFFFFF', text: '#1D1B20', primary: '#6750A4' },
-        dark: { bg: '#1D1B20', text: '#E6E1E5', primary: '#D0BCFF' },
-        ocean: { bg: '#F2F8FF', text: '#001D35', primary: '#0061A4' },
-        forest: { bg: '#F2FFF5', text: '#003D16', primary: '#1B5E20' },
-        sunset: { bg: '#FFF5F2', text: '#4A1100', primary: '#E64A19' },
-        coffee: { bg: '#FDF8F5', text: '#3E2723', primary: '#5D4037' },
-        cyberpunk: { bg: '#0D0221', text: '#00FF41', primary: '#FF003C' }
-    };
-
-    document.getElementById("themeSelect").onchange = (e) => {
-        const selected = themes[e.target.value];
-        document.documentElement.style.setProperty('--canvas-bg', selected.bg);
-        document.documentElement.style.setProperty('--canvas-text', selected.text);
-        document.documentElement.style.setProperty('--canvas-primary', selected.primary);
-    };
-
-    document.getElementById("coverHeight").oninput = (e) => {
-        const val = e.target.value;
-        document.getElementById("heightValue").innerText = val;
-        document.documentElement.style.setProperty('--cover-height', `${val}%`);
-    };
-
-    document.getElementById("fontScale").oninput = (e) => {
-        const val = e.target.value;
-        document.getElementById("fontScaleValue").innerText = val;
-        document.documentElement.style.setProperty('--font-scale', val);
-    };
-
-    const creatorNameInput = document.getElementById("creatorNameInput");
-
-// Ambil data yang tersimpan
-const savedName = localStorage.getItem("creatorName");
-if (savedName) {
-    creatorNameInput.value = savedName;
-    document.documentElement.style.setProperty('--creator-name', `"${savedName}"`);
-}
-
-creatorNameInput.oninput = (e) => {
-    const val = e.target.value || "@captiours";
-
-    // Simpan ke localStorage
-    localStorage.setItem("creatorName", val);
-
-    document.documentElement.style.setProperty('--creator-name', `"${val}"`);
-    document.querySelectorAll('.username').forEach(el => el.innerText = val);
-};
-    let pageCount = 0;
-    const defaultImg = "data:image/svg+xml;charset=UTF-8,%3Csvg width='400' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='400' height='200' fill='%23eaddff'/%3E%3Ctext x='50%25' y='50%25' font-family='Inter' font-size='14' fill='%236750a4' dominant-baseline='middle' text-anchor='middle'%3EMuat Gambar%3C/text%3E%3C/svg%3E";
-
-    function createNewPage(inheritedImage = defaultImg) {
-        pageCount++;
-        const pageId = Date.now().toString() + Math.floor(Math.random() * 100);
-
-        // 1. Form Editor
-        const formHTML = `
-            <div class="card page-form" data-id="${pageId}" id="form-${pageId}">
-                <div class="card-header">
-                    <span>Halaman ${pageCount}</span>
-                    <button class="btn-text-danger" onclick="deletePage('${pageId}')">
-                        <span class="material-icons" style="font-size: 16px;">delete</span>
-                        Hapus
-                    </button>
-                </div>
-                <div class="input-group">
-                    <label>Gambar Sampul</label>
-                    <input type="file" class="page-image" accept="image/*">
-                </div>
-                <div class="input-group">
-                    <label>Judul (Opsional)</label>
-                    <input type="text" class="page-title" placeholder="Masukkan judul...">
-                </div>
-                <div class="input-group">
-                    <label>Konten</label>
-                    <textarea class="page-content" placeholder="Tulis isi konten..."></textarea>
+    <!-- Mobile-only Preview Modal Overlay -->
+    <div class="modal-overlay" id="previewModal" role="dialog" aria-modal="true" aria-labelledby="previewModalTitle">
+        <div class="modal-content" style="max-width: 440px;">
+            <header class="modal-header">
+                <h3 id="previewModalTitle">Pratinjau Karusel</h3>
+                <button class="icon-button" id="closePreviewModal" aria-label="Tutup Pratinjau Karusel">
+                    <span class="material-icons" aria-hidden="true">close</span>
+                </button>
+            </header>
+            <div class="modal-body">
+                <div class="preview-grid" id="previewContainer">
+                    <!-- Preview renders are automatically populated on mobile sizes -->
                 </div>
             </div>
-        `;
-        formsContainer.insertAdjacentHTML('beforeend', formHTML);
+        </div>
+    </div>
 
-        // 2. Canvas Pratinjau
-        const canvasHTML = `
-            <div class="canvas" id="canvas-${pageId}">
-                <div class="cover">
-                    <img id="img-${pageId}" src="${inheritedImage}">
-                </div>
-                <div class="content">
-                    <div class="text-content">
-                        <h1 id="title-${pageId}" style="display: none;"></h1>
-                        <p id="content-${pageId}">Isi konten akan tampil di sini.</p>
-                    </div>
-                    <div class="footer"><div class="username">${localStorage.getItem("creatorName") || "@captiours"}</div>
-                        <div class="pagination" id="pagination-${pageId}"></div>
-                    </div>
-                </div>
-            </div>
-        `;
-        previewContainer.insertAdjacentHTML('beforeend', canvasHTML);
-
-        updatePagination();
-        updateFormLabels();
-    }
-
-    // Event Delegation untuk Data Binding Live
-    formsContainer.addEventListener('input', (e) => {
-        const formCard = e.target.closest('.page-form');
-        if (!formCard) return;
-        const id = formCard.dataset.id;
-        
-        if (e.target.matches('.page-title')) {
-            const titleEl = document.getElementById(`title-${id}`);
-            const val = e.target.value.trim();
-            if (val === "") {
-                titleEl.style.display = "none";
-                titleEl.innerText = "";
-            } else {
-                titleEl.style.display = "block";
-                titleEl.innerText = val;
-            }
-        }
-        if (e.target.matches('.page-content')) {
-            const contentEl = document.getElementById(`content-${id}`);
-            contentEl.innerText = e.target.value || "Isi konten akan tampil di sini.";
-        }
-    });
-
-    formsContainer.addEventListener('change', (e) => {
-        if (e.target.matches('.page-image')) {
-            const formCard = e.target.closest('.page-form');
-            const id = formCard.dataset.id;
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = () => {
-                    document.getElementById(`img-${id}`).src = reader.result;
-                }
-                reader.readAsDataURL(file);
-            }
-        }
-    });
-
-    // Fitur Tambah Halaman dengan Pewarisan Gambar Terakhir
-    addPageBtn.onclick = () => {
-        let lastImageSrc = defaultImg;
-        const allForms = document.querySelectorAll('.page-form');
-        if (allForms.length > 0) {
-            const lastId = allForms[allForms.length - 1].dataset.id;
-            const lastImgEl = document.getElementById(`img-${lastId}`);
-            if (lastImgEl) {
-                lastImageSrc = lastImgEl.src;
-            }
-        }
-        createNewPage(lastImageSrc);
-    };
-
-    window.deletePage = (id) => {
-        const formEl = document.getElementById(`form-${id}`);
-        const canvasEl = document.getElementById(`canvas-${id}`);
-        if(formEl) formEl.remove();
-        if(canvasEl) canvasEl.remove();
-        updatePagination();
-        updateFormLabels();
-    };
-
-    function updateFormLabels() {
-        const forms = document.querySelectorAll('.page-form');
-        forms.forEach((form, index) => {
-            form.querySelector('.card-header span').innerText = `Halaman ${index + 1}`;
-        });
-    }
-
-    function updatePagination() {
-        const canvases = document.querySelectorAll('.canvas');
-        const total = canvases.length;
-
-        canvases.forEach((canvas, index) => {
-            const paginationEl = canvas.querySelector('.pagination');
-            paginationEl.innerHTML = '';
-
-            for (let i = 0; i < total; i++) {
-                const dot = document.createElement('div');
-                dot.className = `page-dot ${i === index ? 'active' : ''}`;
-                paginationEl.appendChild(dot);
-            }
-        });
-    }
-
-    function syncPreviews() {
-        updatePagination();
-    }
-
-    // Proses Unduh Massal (Bulk Download)
-    downloadAllBtn.onclick = async () => {
-        const canvases = document.querySelectorAll('.canvas');
-        if (canvases.length === 0) {
-            alert("Tidak ada halaman yang tersedia untuk diunduh.");
-            return;
-        }
-
-        downloadAllBtn.innerHTML = '<span class="material-icons" style="animation: spin 1s linear infinite;">sync</span> Memproses...';
-        downloadAllBtn.style.pointerEvents = "none";
-
-        for (let i = 0; i < canvases.length; i++) {
-            const canvasElement = canvases[i];
-            
-            const canvasOutput = await html2canvas(canvasElement, {
-                scale: 2,
-                useCORS: true,
-                backgroundColor: null
-            });
-
-            const link = document.createElement('a');
-            link.download = `captiours-page-${i + 1}.png`;
-            link.href = canvasOutput.toDataURL('image/png');
-            link.click();
-
-            await new Promise(resolve => setTimeout(resolve, 500));
-        }
-
-        downloadAllBtn.innerHTML = '<span class="material-icons">download</span> Unduh';
-        downloadAllBtn.style.pointerEvents = "auto";
-    };
-
-    // Inisialisasi Halaman Pertama saat Aplikasi Dimuat
-    createNewPage();
-</script>
+    <!-- Persistent Floating Action Buttons (FAB) -->
+    <div class="fab-container">
+        <!-- Download All Pages Button -->
+        <button class="fab" id="downloadAllBtn" title="Unduh Semua Berkas Halaman">
+            <span class="material-icons" aria-hidden="true">download</span>
+            Unduh
+        </button>
+        <!-- Open Preview Modal Button (Mobile/Tablet Only) -->
+        <button class="fab fab-icon-only" id="openPreviewModal" title="Pratinjau Karusel" aria-label="Buka Pratinjau Karusel" aria-haspopup="dialog" aria-expanded="false">
+            <span class="material-icons">visibility</span>
+        </button>
+    </div>
 
 </body>
 </html>
