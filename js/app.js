@@ -22,6 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Form inputs and controls
     const creatorNameInput = document.getElementById("creatorNameInput");
     const themeSelect = document.getElementById("themeSelect");
+    const canvasFontSelect = document.getElementById("canvasFontSelect");
     const coverHeight = document.getElementById("coverHeight");
     const heightValue = document.getElementById("heightValue");
     const fontScale = document.getElementById("fontScale");
@@ -61,12 +62,28 @@ document.addEventListener("DOMContentLoaded", () => {
         document.documentElement.style.setProperty('--creator-name', `"${savedName}"`);
     }
 
+    // Load Canvas Font from localStorage or set default
+    const savedCanvasFont = localStorage.getItem("canvasFont") || "Inter";
+    if (canvasFontSelect) {
+        canvasFontSelect.value = savedCanvasFont;
+        document.documentElement.style.setProperty('--canvas-font', `'${savedCanvasFont}', sans-serif`);
+    }
+
     // Handle App Dark/Light Theme Switching
     if (appThemeToggle) {
         appThemeToggle.addEventListener("change", (e) => {
             const theme = e.target.checked ? "dark" : "light";
             document.documentElement.setAttribute("data-theme", theme);
             localStorage.setItem("appTheme", theme);
+        });
+    }
+
+    // Handle Canvas Font selection change
+    if (canvasFontSelect) {
+        canvasFontSelect.addEventListener("change", (e) => {
+            const selectedFont = e.target.value;
+            localStorage.setItem("canvasFont", selectedFont);
+            document.documentElement.style.setProperty('--canvas-font', `'${selectedFont}', sans-serif`);
         });
     }
 
@@ -188,10 +205,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Update pagination indicators in canvas renders
     function updatePagination() {
-        const canvases = document.querySelectorAll('.canvas');
-        const total = canvases.length;
+        // Fix double pagination count by calculating total pages from forms, not total canvas elements
+        // Total forms is equal to the number of slider pages.
+        const total = document.querySelectorAll('.page-form').length;
 
-        canvases.forEach((canvas, index) => {
+        // Since canvas element has suffixes 'mobile' and 'desktop' (or only one at a time),
+        // we can correctly identify page index using its positional placement under each container.
+        const mobileCanvases = previewContainer.querySelectorAll('.canvas');
+        mobileCanvases.forEach((canvas, index) => {
             const paginationEl = canvas.querySelector('.pagination');
             if (paginationEl) {
                 paginationEl.innerHTML = '';
@@ -202,11 +223,40 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }
         });
+
+        if (sidebarPreviewContainer) {
+            const desktopCanvases = sidebarPreviewContainer.querySelectorAll('.canvas');
+            desktopCanvases.forEach((canvas, index) => {
+                const paginationEl = canvas.querySelector('.pagination');
+                if (paginationEl) {
+                    paginationEl.innerHTML = '';
+                    for (let i = 0; i < total; i++) {
+                        const dot = document.createElement('div');
+                        dot.className = `page-dot ${i === index ? 'active' : ''}`;
+                        paginationEl.appendChild(dot);
+                    }
+                }
+            });
+        }
     }
 
     // Sync state before preview
     function syncPreviews() {
         updatePagination();
+    }
+
+    // Dynamic markdown parsing helper
+    function renderMarkdown(text) {
+        if (!text) return "Isi konten akan tampil di sini.";
+        if (window.marked && typeof window.marked.parse === "function") {
+            try {
+                return window.marked.parse(text);
+            } catch (e) {
+                console.error("Markdown parsing failed, falling back to simple text.", e);
+            }
+        }
+        // Fallback simple rendering if marked.js is not loaded yet
+        return text.replace(/\n/g, '<br>');
     }
 
     // Add and template a new page
@@ -234,8 +284,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     <input type="text" id="title-input-${pageId}" class="page-title" placeholder="Masukkan judul halaman..." max="100">
                 </div>
                 <div class="input-group">
-                    <label for="content-input-${pageId}">Konten Halaman</label>
-                    <textarea id="content-input-${pageId}" class="page-content" placeholder="Tulis isi konten halaman..." max="500"></textarea>
+                    <label for="content-input-${pageId}">Konten Halaman (Mendukung Markdown)</label>
+                    <textarea id="content-input-${pageId}" class="page-content" placeholder="Tulis isi konten halaman (gunakan *tebal* atau _miring_)..." max="500"></textarea>
                 </div>
             </div>
         `;
@@ -252,7 +302,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 <div class="content">
                     <div class="text-content">
                         <h1 id="title-${containerIdSuffix}-${pageId}" style="display: none;"></h1>
-                        <p id="content-${containerIdSuffix}-${pageId}">Isi konten akan tampil di sini.</p>
+                        <div id="content-${containerIdSuffix}-${pageId}" class="canvas-page-content">Isi konten akan tampil di sini.</div>
                     </div>
                     <div class="footer">
                         <div class="username">${currentCreator}</div>
@@ -314,12 +364,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (e.target.matches('.page-content')) {
             const val = e.target.value;
+            const parsedHTML = renderMarkdown(val);
             const suffixList = ['mobile', 'desktop'];
 
             suffixList.forEach(suffix => {
                 const contentEl = document.getElementById(`content-${suffix}-${id}`);
                 if (contentEl) {
-                    contentEl.textContent = val || "Isi konten akan tampil di sini.";
+                    contentEl.innerHTML = parsedHTML;
                 }
             });
         }
@@ -384,11 +435,17 @@ document.addEventListener("DOMContentLoaded", () => {
                 for (let i = 0; i < canvases.length; i++) {
                     const canvasElement = canvases[i];
 
+                    // Add "exporting" class temporarily to strip border radius/shadows
+                    canvasElement.classList.add("exporting");
+
                     const canvasOutput = await html2canvas(canvasElement, {
                         scale: 2, // High resolution (720x720) for Instagram export
                         useCORS: true,
                         backgroundColor: null
                     });
+
+                    // Remove "exporting" class immediately after render to restore original layout aesthetics
+                    canvasElement.classList.remove("exporting");
 
                     const link = document.createElement('a');
                     link.download = `captiours-page-${i + 1}.png`;

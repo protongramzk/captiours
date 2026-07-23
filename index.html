@@ -9,12 +9,15 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-    <!-- Import Google Font Inter and Google Material Icons -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Import Google Font custom list and Google Material Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Sans+Condensed:ital,wght@0,400;0,700;1,400;1,700&family=Fira+Sans:ital,wght@0,400;0,700;1,400;1,700&family=IBM+Plex+Sans:ital,wght@0,400;0,700;1,400;1,700&family=Inter:wght@400;500;600;700&family=Open+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
     <!-- External Modular Style Sheet -->
     <link rel="stylesheet" href="css/style.css">
+
+    <!-- Markdown (Marked.js) Library -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
     <!-- HTML2Canvas Rendering Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
@@ -114,6 +117,18 @@
                         <option value="sunset">Jingga Senja</option>
                         <option value="coffee">Kopi Latte</option>
                         <option value="cyberpunk">Cyberpunk Neon</option>
+                    </select>
+                </div>
+
+                <!-- Font Selection control -->
+                <div class="input-group">
+                    <label for="canvasFontSelect">Font Karusel</label>
+                    <select id="canvasFontSelect">
+                        <option value="Inter">Inter</option>
+                        <option value="Open Sans">Open Sans</option>
+                        <option value="Fira Sans Condensed">Fira Sans Condensed</option>
+                        <option value="Fira Sans">Fira Sans</option>
+                        <option value="IBM Plex Sans">IBM Plex Sans</option>
                     </select>
                 </div>
 

@@ -26,6 +26,7 @@
     --cover-height: 45%;
     --font-scale: 1;
     --creator-name: "@captiours";
+    --canvas-font: 'Inter', sans-serif;
 }
 
 /* Dark Mode Overrides for App UI */
@@ -515,6 +516,17 @@ input:checked + .slider:before {
     transition: background-color var(--app-transition), color var(--app-transition);
 }
 
+.canvas * {
+    font-family: var(--canvas-font), sans-serif;
+}
+
+/* Style to strip border radius, shadow and border during canvas export */
+.canvas.exporting {
+    border-radius: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
 .cover {
     height: var(--cover-height);
     background-color: var(--app-bg);
@@ -556,6 +568,38 @@ input:checked + .slider:before {
     line-height: 1.45;
     font-size: calc(13px * var(--font-scale));
     opacity: 0.85;
+}
+
+.canvas-page-content {
+    line-height: 1.45;
+    font-size: calc(13px * var(--font-scale));
+    opacity: 0.85;
+    text-align: left;
+}
+
+.canvas-page-content p {
+    margin-bottom: 6px;
+}
+
+.canvas-page-content p:last-child {
+    margin-bottom: 0;
+}
+
+.canvas-page-content ul, .canvas-page-content ol {
+    margin-left: 20px;
+    margin-bottom: 6px;
+}
+
+.canvas-page-content li {
+    margin-bottom: 2px;
+}
+
+.canvas-page-content strong {
+    font-weight: 700;
+}
+
+.canvas-page-content em {
+    font-style: italic;
 }
 
 .footer {
